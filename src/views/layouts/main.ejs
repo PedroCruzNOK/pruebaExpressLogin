@@ -7,6 +7,19 @@
     <title>Login</title>
 </head>
 <body>
+    <% if (registroMessage) {%>
+        <div>
+            <%= registroMessage %>
+        </div>
+    <%} %>
+
+    <% if (entrarMessage) {%>
+        <div>
+            <%= entrarMessage %>
+        </div>
+    <%} %>
     
+    <%- body %>
+    <h6>pedro cruz</h6>
 </body>
 </html>

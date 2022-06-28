@@ -28,8 +28,12 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use((req, res, next) => {
     app.locals.registroMessage = req.flash('registroMessage');
+    app.locals.entrarMessage = req.flash('entrarMessage');
+    app.locals.user = req.user;
     next();
 });
+
+
 
 //routes
 app.use('/', require('./routes/index'));

@@ -19,7 +19,7 @@ passport.use('local-registro', new localStrategy({
 
 }, async (req, email, password, done) => {
 
-    const user = User.findOne({email: email});
+    const user = await User.findOne({email: email});
     if(user){
         return done(null, false, req.flash('registroMessage','el correo ya existe'));
     }else{
