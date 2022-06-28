@@ -3,15 +3,49 @@ const localStrategy = require('passport-local').Strategy;
 
 const User = require('../models/user');
 
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    const user = await User.findById(id);
+    done(null, user);
+});
+
 passport.use('local-registro', new localStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true,
 
 }, async (req, email, password, done) => {
-    const user = new User();
-    user.email = email;
-    user.password = password;
-    await user.save();
+
+    const user = User.findOne({email: email});
+    if(user){
+        return done(null, false, req.flash('registroMessage','el correo ya existe'));
+    }else{
+        const newUser = new User();
+        newUser.email = email;
+        newUser.password = newUser.encryptPassword(password);
+        await newUser.save();
+        done(null, newUser);
+    }
+    
+}));
+
+passport.use('local-entrar', new localStrategy({
+    usernameField: 'email',
+    passwordField: 'password',
+    passReqToCallback: true,
+
+}, async (req, email, password, done) => {
+
+    const user = await User.findOne({email: email});
+    if(!user){
+        return done(null, false, req.flash('entrarMessage','el usuario no existe'));
+    }
+    if (!user.comparePassword(password)){
+        return done(null, false, req.flash('entrarMessage', 'contraseña incorrecta'));
+    }
     done(null, user);
-}))
+    
+}));
